@@ -5,6 +5,5 @@ resources:
   - service-account.yaml
   - cluster-role.yaml
   - cluster-role-binding.yaml
-  - prometheus-k8s.yaml
   - prometheus-ingress.yaml
   - grafana-ingress.yaml
