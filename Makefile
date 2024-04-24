@@ -10,5 +10,9 @@ setup:
 setup-metrics:
 	cd infra/metrics && make setup
 
+.PHONY: setup-eventstore
+setup-eventstore:
+	cd infra/eventstore && make setup
+
 .PHONY: all
 all: clean setup
