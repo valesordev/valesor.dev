@@ -1,0 +1,5 @@
+loki:
+  useTestSchema: true
+  auth_enabled: false
+minio:
+    enabled: true
