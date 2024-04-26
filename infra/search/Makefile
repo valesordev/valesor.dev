@@ -4,4 +4,5 @@ create-namespace:
 
 .PHONY: setup
 setup: create-namespace
-	helm install search --namespace search grafana/loki --values ./loki-values.yaml
+	helm upgrade --install search --namespace search grafana/loki --values ./loki-values.yaml
+	kubectl wait --for=condition=Ready pods -l app.kubernetes.io/instance=search -n search --timeout=300s

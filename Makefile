@@ -18,5 +18,9 @@ setup-eventstore:
 setup-search:
 	cd infra/search && make setup
 
+.PHONY: setup-alloy
+setup-alloy:
+	cd infra/alloy && make setup
+
 .PHONY: all
-all: clean setup
+all: clean setup setup-metrics setup-eventstore setup-search setup-alloy
