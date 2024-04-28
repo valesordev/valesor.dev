@@ -1,0 +1,8 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaTopic
+metadata:
+  name: events
+  labels:
+    strimzi.io/cluster: eventstore
+spec:
+  topicName: events

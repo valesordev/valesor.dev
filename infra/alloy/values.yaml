@@ -6,3 +6,25 @@ alloy:
         level = "info"
         format = "logfmt"
       }
+      loki.source.kafka "kafka_source" {
+        brokers = ["eventstore-kafka-bootstrap.eventstore:9092"]
+        topics = ["events"]
+        labels = {
+          component = "loki.source.kafka"
+        }
+        forward_to = [loki.relabel.kafka.receiver]
+        use_incoming_timestamp = true
+        relabel_rules = loki.relabel.kafka.rules
+      }
+      loki.relabel "kafka" {
+        forward_to = [loki.write.search.receiver]
+        rule {
+          source_labels = ["__meta_kafka_topic"]
+          target_label = "topic"
+        }
+      }
+      loki.write "search" {
+        endpoint {
+          url = "search-loki-gateway.search/api/v1/push"
+        }
+      }

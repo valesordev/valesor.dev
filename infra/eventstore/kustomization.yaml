@@ -4,4 +4,7 @@ namespace: eventstore
 resources:
   - kafka.yaml
   - kafka-connect.yaml
+  - kafka-bridge.yaml
+  - kafka-events-topic.yaml
+  - bridge-ingress.yaml
   - strimzi-pod-monitor.yaml

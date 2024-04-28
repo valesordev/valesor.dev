@@ -1,5 +1,5 @@
 create-namespace:
-	kubectl create namespace alloy
+	- kubectl create namespace alloy
 
 setup: create-namespace
 	helm upgrade --install --namespace alloy alloy grafana/alloy -f values.yaml

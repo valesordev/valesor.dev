@@ -1,0 +1,9 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaBridge
+metadata:
+  name: bridge
+spec:
+  replicas: 1
+  bootstrapServers: eventstore-kafka-bootstrap:9092
+  http:
+    port: 8080
