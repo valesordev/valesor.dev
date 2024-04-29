@@ -22,5 +22,9 @@ setup-search:
 setup-alloy:
 	cd infra/alloy && make setup
 
+.PHONY: setup-cache
+setup-cache:
+	cd infra/cache && make setup
+
 .PHONY: all
-all: clean setup setup-metrics setup-eventstore setup-search setup-alloy
+all: clean setup setup-metrics setup-eventstore setup-search setup-alloy setup-cache
