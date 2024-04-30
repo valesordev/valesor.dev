@@ -26,5 +26,9 @@ setup-alloy:
 setup-cache:
 	cd infra/cache && make setup
 
+.PHONY: setup-tabular
+setup-tabular:
+	cd infra/tabular && make setup
+
 .PHONY: all
-all: clean setup setup-metrics setup-eventstore setup-search setup-alloy setup-cache
+all: clean setup setup-metrics setup-eventstore setup-search setup-alloy setup-cache setup-tabular

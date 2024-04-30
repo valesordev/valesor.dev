@@ -1,0 +1,19 @@
+kind: Kustomization
+apiVersion: kustomize.config.k8s.io/v1beta1
+
+namespace: tabular
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - name: postgres-secret
+    envs:
+      - local.secret.env
+    type: Opaque
+
+resources:
+  - pv.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
