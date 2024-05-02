@@ -20,6 +20,4 @@ require (
 	golang.org/x/sys v0.19.0 // indirect
 )
 
-require internal/otel v1.0.0
-
 replace internal/otel => ./internal/otel

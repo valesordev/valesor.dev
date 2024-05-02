@@ -10,7 +10,7 @@ import (
 	"os/signal"
 	"time"
 	
-	"internal/otel"
+	"github.com/valesordev/autobs/internal/otel"
 
 	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"github.com/spf13/cobra"
