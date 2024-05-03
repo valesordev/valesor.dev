@@ -7,5 +7,5 @@ package main
 import "github.com/valesordev/autobs/cmd/autobs"
 
 func main() {
-	cmd.Execute()
+	autobs.Execute()
 }
