@@ -26,3 +26,7 @@ build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v ./cmd
 docker-build:
 	docker build -t $(BINARY_NAME) .
+
+.PHONY: proto
+proto:
+    protoc -I api/protobuf/ api/protobuf/**/*.proto --go_out=plugins=grpc:internal/api

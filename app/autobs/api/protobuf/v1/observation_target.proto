@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+// Define an enumeration for the supported formats.
+enum Format {
+    UNKNOWN = 0; // Default value, representing unspecified format
+    HTML = 1;    // HTML format
+    JSON = 2;    // JSON format
+}
+
+// ObservationTarget defines a target with metadata, location, interval and format.
+message ObservationTarget {
+    // Map for arbitrary metadata.
+    map<string, string> metadata = 1;
+
+    // Location specified as a URI.
+    string location = 2;
+
+    // Interval as a duration; using string to comply with ISO 8601 duration format.
+    string interval = 3;
+
+    // Format of the observation data.
+    Format format = 4;
+}

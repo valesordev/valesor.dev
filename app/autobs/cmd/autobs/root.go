@@ -16,14 +16,10 @@ var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "cmd",
-	Short: "A brief description of your application",
-	Long: `A longer description that spans multiple lines and likely contains
-examples and usage of using your application. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+	Use:   "autobs",
+	Short: "Automated Observer is an application to gather information from the internet",
+	Long: `This application configures a set of targets to scrape. It then scrapes those targets stripping any unneeded data from it.
+	Then it sends that data to a store. Another component reads the data from that store and generates a set of summaries from it`,
 	// Uncomment the following line if your bare application
 	// has an action associated with it:
 	// Run: func(cmd *cobra.Command, args []string) { },
@@ -45,11 +41,14 @@ func init() {
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cmd.yaml)")
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.autobs.yaml)")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	
+	rootCmd.AddCommand(targetCmd)
+	rootCmd.AddCommand(gathererCmd)
 }
 
 // initConfig reads in config file and ENV variables if set.
@@ -62,10 +61,10 @@ func initConfig() {
 		home, err := os.UserHomeDir()
 		cobra.CheckErr(err)
 
-		// Search config in home directory with name ".cmd" (without extension).
+		// Search config in home directory with name ".autobs" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigType("yaml")
-		viper.SetConfigName(".cmd")
+		viper.SetConfigName(".autobs")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
