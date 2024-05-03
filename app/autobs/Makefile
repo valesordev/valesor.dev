@@ -9,7 +9,7 @@ BINARY_UNIX=$(BINARY_NAME)_unix
 
 all: test build
 build: 
-	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/autobs
+	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd
 test: 
 	$(GOTEST) -v ./...
 clean: 
@@ -17,12 +17,12 @@ clean:
 	rm -f $(BINARY_NAME)
 	rm -f $(BINARY_UNIX)
 run:
-	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/autobs
+	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd
 	./$(BINARY_NAME)
 deps:
 	$(GOGET) ./...
 # Cross compilation
 build-linux:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v ./cmd/autobs
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v ./cmd
 docker-build:
 	docker build -t $(BINARY_NAME) .
