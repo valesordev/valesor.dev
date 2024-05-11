@@ -41,10 +41,14 @@ var recordCmd = &cobra.Command{
 }
 
 func init() {
+	upsertCmd.Flags.Stringp("name", "n", "", "Name of the target")
+	upsertCmd.Flags.Stringp("uri", "u", "", "URI of the target")
 	targetCmd.AddCommand(upsertCmd)
+	deleteCmd.Flags.Stringp("name", "n", "", "Name of the target")
 	targetCmd.AddCommand(deleteCmd)
 	targetCmd.AddCommand(listCmd)
 	targetCmd.AddCommand(serveCmd)
+	recordCmd.Flags.Stringp("records", "r", "", "Path to the records file")
 	targetCmd.AddCommand(recordCmd)
 
 	// Initialize other sub-commands here, similarly
