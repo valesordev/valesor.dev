@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-const Quiz = ({ question, options, onSubmit }) => {
-  const [selectedOption, setSelectedOption] = useState('');
+const Quiz = ({ question, options, selected, onSubmit }) => {
+  const [selectedOption, setSelectedOption] = useState(selected);
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);

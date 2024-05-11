@@ -11,14 +11,14 @@ const question = 'What is the capital of France?';
 const options = ['Paris', 'London', 'Berlin', 'Madrid'];
 
 export const Default = () => (
-  <Quiz question={question} options={options} onSubmit={action('Submit')} />
+  <Quiz question={question} options={options} selected={options[0]} onSubmit={action('Submit')} />
 );
 
 export const WithPreselectedOption = () => (
   <Quiz
     question={question}
     options={options}
-    selectedOption="Paris"
+    selected="London"
     onSubmit={action('Submit')}
   />
 );
