@@ -1,0 +1,68 @@
+alloy:
+  clustering:
+    enabled: true
+  controller:
+    type: 'statefulset'
+    replicas: 2
+  crds:
+    create: false
+  configMap:
+    content: |-
+      // Write your Alloy config here:
+      logging {
+        level = "info"
+        format = "logfmt"
+      }
+      // read the credentials secret for remote_write authorization
+      remote.kubernetes.secret "credentials" {
+        namespace = "alloy"
+        name      = "grafana-cloud-credentials-metrics"
+      }
+
+      discovery.relabel "integrations_alloy" {
+        targets = prometheus.exporter.self.integrations_alloy.targets
+
+        rule {
+          target_label = "instance"
+          replacement  = constants.hostname
+        }
+
+        rule {
+          target_label = "alloy_hostname"
+          replacement  = constants.hostname
+        }
+
+        rule {
+          target_label = "job"
+          replacement  = "integrations/alloy-check"
+        }
+      }
+      prometheus.exporter.self "integrations_alloy" { }
+
+      prometheus.scrape "integrations_alloy" {
+        targets    = discovery.relabel.integrations_alloy.output
+        forward_to = [prometheus.relabel.integrations_alloy.receiver]  
+
+        scrape_interval = "60s"
+      }
+
+      prometheus.relabel "integrations_alloy" {
+        forward_to = [prometheus.remote_write.metrics_service.receiver]
+
+        rule {
+          source_labels = ["__name__"]
+          regex         = "(prometheus_target_sync_length_seconds_sum|prometheus_target_scrapes_.*|prometheus_target_interval.*|prometheus_sd_discovered_targets|alloy_build.*|prometheus_remote_write_wal_samples_appended_total|process_start_time_seconds)"
+          action        = "keep"
+        }
+      }
+
+      prometheus.remote_write "metrics_service" {
+        endpoint {
+          url = "https://prometheus-us-central1.grafana.net/api/prom/push"
+
+          basic_auth {
+            username = nonsensitive(remote.kubernetes.secret.credentials.data["username"])
+            password = remote.kubernetes.secret.credentials.data["password"]
+          }
+        }
+      }

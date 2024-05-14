@@ -10,5 +10,9 @@ setup-infra:
 setup-app:
 	cd app && make setup
 
+.PHONY: dev-app
+dev-app:
+	cd app && make dev
+
 .PHONY: all
 all: clean setup-infra setup-app
