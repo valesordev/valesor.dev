@@ -10,13 +10,23 @@ alloy:
     content: |-
       // Write your Alloy config here:
       logging {
-        level = "info"
+        level  = "info"
         format = "logfmt"
       }
       // read the credentials secret for remote_write authorization
-      remote.kubernetes.secret "credentials" {
+      remote.kubernetes.secret "metrics_credentials" {
         namespace = "alloy"
         name      = "grafana-cloud-credentials-metrics"
+      }
+      // read the credentials secret for remote_write authorization
+      remote.kubernetes.secret "logs_credentials" {
+        namespace = "alloy"
+        name      = "grafana-cloud-credentials-logs"
+      }
+
+      remote.kubernetes.secret "traces_credentials" {
+        namespace = "alloy"
+        name      = "grafana-cloud-credentials-traces"
       }
 
       discovery.relabel "integrations_alloy" {
@@ -37,11 +47,12 @@ alloy:
           replacement  = "integrations/alloy-check"
         }
       }
+
       prometheus.exporter.self "integrations_alloy" { }
 
       prometheus.scrape "integrations_alloy" {
         targets    = discovery.relabel.integrations_alloy.output
-        forward_to = [prometheus.relabel.integrations_alloy.receiver]  
+        forward_to = [prometheus.relabel.integrations_alloy.receiver]
 
         scrape_interval = "60s"
       }
@@ -61,8 +72,102 @@ alloy:
           url = "https://prometheus-us-central1.grafana.net/api/prom/push"
 
           basic_auth {
-            username = nonsensitive(remote.kubernetes.secret.credentials.data["username"])
-            password = remote.kubernetes.secret.credentials.data["password"]
+            username = nonsensitive(remote.kubernetes.secret.metrics_credentials.data["username"])
+            password = remote.kubernetes.secret.metrics_credentials.data["password"]
+          }
+        }
+      }
+
+      otelcol.receiver.otlp "default" {
+        // configures the default grpc endpoint "0.0.0.0:4317"
+        grpc { }
+        // configures the default http/protobuf endpoint "0.0.0.0:4318"
+        http { }
+
+        output {
+          metrics = [otelcol.processor.resourcedetection.default.input]
+          logs    = [otelcol.processor.resourcedetection.default.input]
+          traces  = [otelcol.processor.resourcedetection.default.input]
+        }
+      }
+
+      otelcol.processor.resourcedetection "default" {
+        detectors = ["env", "system"] // add "gcp", "ec2", "ecs", "elastic_beanstalk", "eks", "lambda", "azure", "aks", "consul", "heroku"  if you want to use cloud resource detection
+
+        system {
+          hostname_sources = ["os"]
+        }
+
+        output {
+          metrics = [otelcol.processor.transform.add_resource_attributes_as_metric_attributes.input]
+          logs    = [otelcol.processor.batch.default.input]
+          traces  = [
+            otelcol.processor.batch.default.input,
+            otelcol.connector.host_info.default.input,
+          ]
+        }
+      }
+
+      otelcol.connector.host_info "default" {
+        host_identifiers = ["host.name"]
+
+        output {
+          metrics = [otelcol.processor.batch.default.input]
+        }
+      }
+
+      otelcol.processor.transform "add_resource_attributes_as_metric_attributes" {
+        error_mode = "ignore"
+
+        metric_statements {
+          context    = "datapoint"
+          statements = [
+            "set(attributes[\"deployment.environment\"], resource.attributes[\"deployment.environment\"])",
+            "set(attributes[\"service.version\"], resource.attributes[\"service.version\"])",
+          ]
+        }
+
+        output {
+          metrics = [otelcol.processor.batch.default.input]
+        }
+      }
+
+      otelcol.processor.batch "default" {
+        output {
+          metrics = [otelcol.exporter.prometheus.metrics_service.input]
+          logs    = [otelcol.exporter.loki.grafana_cloud_loki.input]
+          traces  = [otelcol.exporter.otlp.grafana_cloud_tempo.input]
+        }
+      }
+
+      otelcol.exporter.loki "grafana_cloud_loki" {
+        forward_to = [loki.write.loki.receiver]
+      }
+
+      otelcol.exporter.prometheus "metrics_service" {
+        add_metric_suffixes = false
+        forward_to          = [prometheus.remote_write.metrics_service.receiver]
+      }
+
+      otelcol.exporter.otlp "grafana_cloud_tempo" {
+        client {
+          endpoint = "tempo-us-central1.grafana.net:443"
+          auth     = otelcol.auth.basic.grafana_cloud_tempo.handler
+        }
+      }
+
+      otelcol.auth.basic "grafana_cloud_tempo" {
+        username = nonsensitive(remote.kubernetes.secret.traces_credentials.data["username"])
+        password = remote.kubernetes.secret.traces_credentials.data["password"]
+      }
+
+      loki.write "loki" {
+        endpoint {
+          url = "https://logs-prod-017.grafana.net/loki/api/v1/push"
+
+          basic_auth {
+            username = nonsensitive(remote.kubernetes.secret.logs_credentials.data["username"])
+            password = remote.kubernetes.secret.logs_credentials.data["password"]
           }
         }
       }

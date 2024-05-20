@@ -138,4 +138,5 @@ alloy:
             username = nonsensitive(remote.kubernetes.secret.credentials.data["username"])
             password = remote.kubernetes.secret.credentials.data["password"]
           }
+        }
       }
