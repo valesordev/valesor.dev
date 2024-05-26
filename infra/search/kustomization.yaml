@@ -1,8 +1,4 @@
 kind: Kustomization
 apiVersion: kustomize.config.k8s.io/v1beta1
-  
-namespace: cache
-
 resources:
-  - dragonfly.yaml
-  - dragonfly-pod-monitor.yaml
+  - loki-ingress.yaml

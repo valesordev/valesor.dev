@@ -27,4 +27,4 @@ setup-tabular:
 	cd tabular && make setup
 
 .PHONY: setup
-setup: setup-k8s setup-alloy setup-eventstore setup-search setup-cache setup-tabular
+setup: setup-k8s setup-eventstore setup-search setup-cache setup-tabular setup-alloy

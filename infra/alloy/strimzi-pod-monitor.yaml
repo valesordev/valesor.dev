@@ -2,6 +2,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: cluster-operator-metrics
+  namespace: eventstore
   labels:
     app: strimzi
 spec:
@@ -19,6 +20,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: entity-operator-metrics
+  namespace: eventstore
   labels:
     app: strimzi
 spec:
@@ -36,6 +38,7 @@ apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
 metadata:
   name: kafka-resources-metrics
+  namespace: eventstore
   labels:
     app: strimzi
 spec:

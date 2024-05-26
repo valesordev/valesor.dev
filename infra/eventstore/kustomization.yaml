@@ -7,4 +7,3 @@ resources:
   - kafka-bridge.yaml
   - kafka-events-topic.yaml
   - bridge-ingress.yaml
-  - strimzi-pod-monitor.yaml

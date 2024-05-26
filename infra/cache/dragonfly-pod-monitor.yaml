@@ -1,0 +1,17 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: dragonflydb-metrics
+  namespace: cache
+  labels:
+    app: dragonflydb
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: dragonfly
+  namespaceSelector:
+    matchNames:
+      - cache
+  podMetricsEndpoints:
+  - path: /metrics
+    port: admin
