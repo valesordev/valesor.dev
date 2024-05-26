@@ -6,6 +6,10 @@ setup-k8s:
 # setup-metrics:
 # 	cd metrics && make setup
 
+.PHONY: setup-identity
+setup-identity:
+	cd identity && make setup
+
 .PHONY: setup-eventstore
 setup-eventstore:
 	cd eventstore && make setup
@@ -27,4 +31,4 @@ setup-tabular:
 	cd tabular && make setup
 
 .PHONY: setup
-setup: setup-k8s setup-eventstore setup-search setup-cache setup-tabular setup-alloy
+setup: setup-k8s setup-identity setup-eventstore setup-search setup-cache setup-tabular setup-alloy

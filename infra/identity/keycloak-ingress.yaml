@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: keycloak-ingress
+spec:
+  tls:
+    - hosts:
+        - keycloak.dsdemo.valesordev.com
+  rules:
+    - host: keycloak.dsdemo.valesordev.com
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: keycloak
+                port:
+                  number: 8080
