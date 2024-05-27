@@ -18,7 +18,7 @@ spec:
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:24.0.4
-          args: ["start-dev"]
+          args: ["start-dev", "--metrics-enabled=true"]
           env:
             - name: KEYCLOAK_ADMIN
               value: "admin"
@@ -26,6 +26,8 @@ spec:
               value: "admin"
             - name: KEYCLOAK_HOST
               value: keycloak.dsdemo.valesordev.com
+            - name: KEYCLOAK_METRICS_ENABLED
+              value: "true"
             - name: KC_PROXY
               value: "edge"
           resources:
