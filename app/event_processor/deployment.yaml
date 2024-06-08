@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-kafka-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-kafka
+  template:
+    metadata:
+      labels:
+        app: flask-kafka
+    spec:
+      containers:
+        - name: flask-kafka-app
+          image: your-docker-image:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: KAFKA_BROKER
+              value: "your-kafka-broker:9092"
+            - name: OTEL_EXPORTER_OTLP_ENDPOINT
+              value: "http://otel-collector:4317"
+          resources:
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+            requests:
+              cpu: "0.5"
+              memory: "256Mi"
