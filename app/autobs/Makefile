@@ -4,6 +4,7 @@ GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
 GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
+PACKAGE_NAMESPACE=ghcr.com/valesordev/valesor.dev
 BINARY_NAME=autobs
 BINARY_UNIX=$(BINARY_NAME)_unix
 
@@ -25,7 +26,7 @@ deps:
 build-linux:
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v ./cmd
 docker-build:
-	docker build -t $(BINARY_NAME) .
+	docker build -t $(PACKAGE_NAMESPACE)/$(BINARY_NAME) .
 
 .PHONY: proto
 proto:

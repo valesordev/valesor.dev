@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: autobs-targets-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: autobs
+  template:
+    metadata:
+      labels:
+        app: autobs
+    spec:
+      containers:
+      - name: autobs-targets
+        image: ghcr.io/valesordev/valesor.dev/autobs:latest
+        args: ["targets", "serve"]
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+          limits:
+            cpu: 600m
+            memory: 750Mi

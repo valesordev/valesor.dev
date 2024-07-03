@@ -1,6 +1,8 @@
 package autobs
 
 import (
+	"github.com/valesordev/autobs/internal/gatherer"
+
 	"github.com/spf13/cobra"
 )
 
@@ -14,6 +16,9 @@ var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Run a gatherer",
 	Long:  `The run command allows you to run a gatherer.`,
+	Run: func(cmd *cobra.Command, args []string) {
+		gatherer.RunCommand(cmd, args)
+	},
 }
 
 var validateCmd = &cobra.Command{

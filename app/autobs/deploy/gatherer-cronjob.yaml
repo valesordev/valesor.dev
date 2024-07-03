@@ -1,0 +1,17 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: autobs-gatherer
+spec:
+  schedule: "*/5 * * * *" # Run every 5 minutes
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: gatherer
+              image: ghcr.io/valesordev/valesor.dev/autobs:latest
+              imagePullPolicy: IfNotPresent
+              args: ["gatherer"]
+          restartPolicy: OnFailure

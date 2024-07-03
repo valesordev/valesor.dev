@@ -22,6 +22,9 @@ RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o autobs ./cmd/autobs
 # Use a smaller image to run the application
 FROM alpine:latest
 
+LABEL org.opencontainers.image.source=https://github.com/valesordev/valesor.dev
+LABEL org.opencontainers.image.description="Automated Observer"
+
 # Set the Current Working Directory inside the container
 WORKDIR /root/
 
