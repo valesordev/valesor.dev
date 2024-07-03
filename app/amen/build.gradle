@@ -8,7 +8,7 @@ group = 'dev.valesor'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+	sourceCompatibility = '22'
 }
 
 repositories {
@@ -20,12 +20,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'io.micrometer:micrometer-tracing-bridge-brave'
-	implementation 'org.springframework.kafka:spring-kafka'
+
+	implementation 'io.micrometer:micrometer-tracing-bridge-otel'
+	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
+
 	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+	implementation 'org.springframework.kafka:spring-kafka'
+
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
+	runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {

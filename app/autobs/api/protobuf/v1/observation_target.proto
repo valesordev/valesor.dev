@@ -5,6 +5,7 @@ enum Format {
     UNKNOWN = 0; // Default value, representing unspecified format
     HTML = 1;    // HTML format
     JSON = 2;    // JSON format
+    XML = 3;     // XML formatq
 }
 
 // ObservationTarget defines a target with metadata, location, interval and format.
@@ -16,7 +17,7 @@ message ObservationTarget {
     string location = 2;
 
     // Interval as a duration; using string to comply with ISO 8601 duration format.
-    string interval = 3;
+    uint32 interval = 3;
 
     // Format of the observation data.
     Format format = 4;
