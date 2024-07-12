@@ -552,6 +552,13 @@ spec:
           name: create
           securityContext:
             allowPrivilegeEscalation: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 90Mi
+            limits:
+              cpu: 100m
+              memory: 90Mi
       nodeSelector:
         kubernetes.io/os: linux
       restartPolicy: OnFailure
@@ -601,6 +608,13 @@ spec:
           name: patch
           securityContext:
             allowPrivilegeEscalation: false
+          resources:
+            requests:
+              cpu: 100m
+              memory: 90Mi
+            limits:
+              cpu: 100m
+              memory: 90Mi
       nodeSelector:
         kubernetes.io/os: linux
       restartPolicy: OnFailure

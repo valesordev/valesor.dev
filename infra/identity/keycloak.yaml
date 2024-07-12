@@ -4,6 +4,8 @@ kind: Deployment
 metadata:
   name: keycloak
   labels:
+    app.kubernetes.io/name: keycloak
+    app.kubernetes.io/instance: keycloak
     app: keycloak
 spec:
   replicas: 1
@@ -13,6 +15,8 @@ spec:
   template:
     metadata:
       labels:
+        app.kubernetes.io/name: keycloak
+        app.kubernetes.io/instance: keycloak
         app: keycloak
     spec:
       containers:

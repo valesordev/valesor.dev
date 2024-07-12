@@ -7,5 +7,4 @@ resources:
   - keycloak.yaml
   - keycloak-service.yaml
   - keycloak-ingress.yaml
-  - keycloak-pod-monitor.yaml
 

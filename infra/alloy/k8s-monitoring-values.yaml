@@ -59,69 +59,53 @@ alloy: {}
 alloy-events: {}
 alloy-logs: {}
 extraConfig: |-
-  // read the messages on the events topic and send to a local loki server
-  loki.source.kafka "kafka_source" {
-    brokers = ["eventstore-kafka-bootstrap.eventstore:9092"]
-    topics = ["events"]
-    labels = {component = "loki.source.kafka"}
+  // loki.source.kafka "kafka_source" {
+  //   brokers = ["eventstore-kafka-bootstrap.eventstore:9092"]
+  //   topics = ["events"]
+  //   labels = {component = "loki.source.kafka"}
+  //   forward_to = [loki.write.logs_service.receiver]
+  //   use_incoming_timestamp = true
+  //   relabel_rules = loki.relabel.kafka.rules
+  // }
+  // loki.relabel "kafka" {
+  //   forward_to = [loki.write.logs_service.receiver]
+  //   rule {
+  //     source_labels = ["__meta_kafka_topic"]
+  //     target_label = "topic"
+  //   }
+  //   rule {
+  //     source_labels = ["__meta_kafka_message_key"]
+  //     target_label = "message_key"
+  //   }
+  // }
+  otelcol.receiver.kafka "default" {
+    brokers          = ["eventstore-kafka-bootstrap.eventstore:9092"]
+    protocol_version = "2.0.0"
+     
+    topic = "events"
+    group_id = "events-test-group"
+    client_id = "events-test-group"
+    encoding = "json"
+
+    output {
+      logs    = [otelcol.processor.attributes.bancogalacia.input]
+    }
+  }
+  otelcol.processor.attributes "bancogalacia" {
+    action {
+      key = "topic"
+      value = "events"
+      action = "insert"
+    }
+    output {
+      logs    = [otelcol.processor.k8sattributes.bancogalacia.input]
+    }
+  }
+  otelcol.processor.k8sattributes "bancogalacia" {
+    output {
+      logs    = [otelcol.exporter.loki.kafka_logs.input]
+    }
+  }
+  otelcol.exporter.loki "kafka_logs" {
     forward_to = [loki.write.logs_service.receiver]
-    use_incoming_timestamp = true
-    relabel_rules = loki.relabel.kafka.rules
-  }
-  loki.relabel "kafka" {
-    forward_to = [loki.write.logs_service.receiver]
-    rule {
-      source_labels = ["__meta_kafka_topic"]
-      target_label = "topic"
-    }
-    rule {
-      source_labels = ["__meta_kafka_message_key"]
-      target_label = "message_key"
-    }
-  }
-  discovery.relabel "loki" {
-    targets = discovery.kubernetes.services.targets
-    rule {
-        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
-        regex = "search"
-        action = "keep"
-    }
-    rule {
-        source_labels = ["__meta_kubernetes_service_port_number"]
-        regex = "3100"
-        action = "keep"
-    }
-    rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        target_label = "instance"
-    }
-  }
-  prometheus.scrape "loki" {
-      job_name     = "integrations/loki"
-      targets      = discovery.relabel.loki.output
-      honor_labels = true
-      forward_to   = [prometheus.relabel.metrics_service.receiver]
-  }
-  discovery.relabel "dragonflydb" {
-    targets = discovery.kubernetes.services.targets
-    rule {
-        source_labels = ["__meta_kubernetes_service_label_app_kubernetes_io_instance"]
-        regex = "dragonflydb"
-        action = "keep"
-    }
-    rule {
-        source_labels = ["__meta_kubernetes_service_port_number"]
-        regex = "6379"
-        action = "keep"
-    }
-    rule {
-        source_labels = ["__meta_kubernetes_pod_name"]
-        target_label = "instance"
-    }
-  }
-  prometheus.scrape "dragonflydb" {
-      job_name     = "integrations/dragonflydb"
-      targets      = discovery.relabel.dragonflydb.output
-      honor_labels = true
-      forward_to   = [prometheus.relabel.metrics_service.receiver]
   }
