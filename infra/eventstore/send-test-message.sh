@@ -6,7 +6,6 @@ curl -X POST \
   -d '{
     "records": [
         {
-            "key": "testrecord",
             "value": "test record value"
         }
     ]

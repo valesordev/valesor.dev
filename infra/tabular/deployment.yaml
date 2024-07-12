@@ -2,6 +2,10 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
+  labels:
+    app: postgres
+    app.kubernetes.io/name: postgres
+    app.kubernetes.io/instance: postgres
 spec:
   replicas: 3
   selector:
@@ -11,6 +15,8 @@ spec:
     metadata:
       labels:
         app: postgres
+        app.kubernetes.io/name: postgres
+        app.kubernetes.io/instance: postgres
     spec:
       containers:
         - name: postgres
@@ -24,6 +30,13 @@ spec:
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: postgresdata
+          resources:
+            limits:
+              cpu: "1"
+              memory: "2Gi" # Adjust based on your requirements
+            requests:
+              cpu: "0.5"
+              memory: "1Gi" # Adjust based on your requirements
       volumes:
         - name: postgresdata
           persistentVolumeClaim:
