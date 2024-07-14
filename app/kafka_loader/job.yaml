@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kafka-producer-job
+spec:
+  template:
+    spec:
+      containers:
+      - name: kafka-producer
+        image: ghcr.com/valesordev/valesor.dev/kafka-loader
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: KAFKA_BROKER
+          value: "eventstore-kafka-bootstrap.eventstore:9092" # Replace with your Kafka broker address
+        - name: KAFKA_TOPIC
+          value: "events" # Replace with your Kafka topic name
+      restartPolicy: Never
+  backoffLimit: 4
