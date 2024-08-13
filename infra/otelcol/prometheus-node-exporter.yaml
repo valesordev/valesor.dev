@@ -1,0 +1,68 @@
+prometheus-node-exporter:
+  env:
+  
+  podLabels:
+    app.kubernetes.io/vertical: platform
+    app.kubernetes.io/team: sre
+
+  resources:
+    limits:
+      cpu: 50m
+      memory: 25Mi
+    requests:
+      cpu: 20m
+      memory: 20Mi
+
+  containerSecurityContext:
+    readOnlyRootFilesystem: true
+
+  #priorityClassName: "system-cluster-critical"
+  #affinity:
+  #  nodeAffinity:
+  #    requiredDuringSchedulingIgnoredDuringExecution:
+  #      nodeSelectorTerms:
+  #        - matchExpressions:
+  #            - key: eks.amazonaws.com/compute-type
+  #              operator: NotIn
+  #              values:
+  #                - fargate
+
+  nodeSelector:
+    kubernetes.io/os: linux
+
+  tolerations:
+    - effect: NoSchedule
+      operator: Exists
+
+  extraArgs:
+    - --collector.disable-defaults
+    - --collector.cpu
+    - --collector.meminfo
+    - --collector.filesystem
+    - --collector.loadavg
+    - --collector.diskstats
+    - --collector.netdev
+    - --collector.ethtool
+
+  prometheus:
+    monitor:
+      enabled: true
+      relabelings:
+        - action: keep
+          regex: prometheus-node-exporter.*
+          sourceLabels:
+            - __meta_kubernetes_pod_label_app_kubernetes_io_name
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_pod_node_name
+          targetLabel: instance
+        - action: replace
+          sourceLabels:
+            - __meta_kubernetes_namespace
+          targetLabel: namespace
+      metricRelabelings:
+        - sourceLabels: [__name__]
+          regex: 'node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|process_cpu_seconds_total|process_resident_memory_bytes'
+          action: keep
+      interval: ""
+      scrapeTimeout: 15s

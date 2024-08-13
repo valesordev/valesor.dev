@@ -18,9 +18,9 @@ setup-eventstore:
 setup-search:
 	cd search && make setup
 
-.PHONY: setup-alloy
-setup-alloy:
-	cd alloy && make setup
+.PHONY: setup-otelcol
+setup-otelcol:
+	cd otelcol && make setup
 
 .PHONY: setup-cache
 setup-cache:
@@ -35,4 +35,4 @@ setup-columnar:
 	cd columnar && make setup
 
 .PHONY: setup
-setup: setup-k8s setup-tabular setup-identity setup-eventstore setup-metrics setup-search setup-columnar setup-cache setup-alloy 
+setup: setup-k8s setup-tabular setup-identity setup-eventstore setup-metrics setup-search setup-columnar setup-cache setup-otelcol 

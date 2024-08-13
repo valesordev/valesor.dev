@@ -1,0 +1,32 @@
+customLabels:
+  app.kubernetes.io/telemetry-protocol: otlp
+  app.kubernetes.io/metrics-protocol: otlp
+  app.kubernetes.io/logs-protocol: otlp
+  app.kubernetes.io/traces-protocol: otlp
+metricLabelsAllowlist:
+  - deployments=[*]
+  - pods=[*]
+  - daemonsets=[*]
+  - statefulsets=[*]
+  - jobs=[*]
+resources:
+  requests:
+    cpu: 20m
+    memory: 40Mi
+  limits:
+    memory: 80Mi
+
+metricAllowlist:
+  - kube_daemonset.*
+  - kube_deployment.*
+  - kube_horizontalpodautoscaler.*
+  - kube_job.*
+  - kube_namespace.*
+  - kube_node.*
+  - kube_persistentvolumeclaim.*
+  - kube_pod.*
+  - kube_replicaset.*
+  - kube_resourcequota
+  - kube_statefulset.*
+
+

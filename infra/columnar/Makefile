@@ -1,6 +1,6 @@
 .PHONY: setup
 setup:
-	helm install pinot pinot/pinot \
+	helm upgrade --install pinot pinot/pinot \
 		--create-namespace \
 		-n columnar \
 		--set cluster.name=pinot \
