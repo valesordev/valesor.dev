@@ -8,6 +8,7 @@ class AutomatedMentorApplicationTests {
 
 	@Test
 	void contextLoads() {
+    throw new RuntimeException("My Test Fails");
 	}
 
 }
