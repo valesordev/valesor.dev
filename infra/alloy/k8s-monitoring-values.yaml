@@ -88,20 +88,20 @@ extraConfig: |-
     encoding = "json"
 
     output {
-      logs    = [otelcol.processor.attributes.bancogalacia.input]
+      logs    = [otelcol.processor.attributes.valesordev.input]
     }
   }
-  otelcol.processor.attributes "bancogalacia" {
+  otelcol.processor.attributes "valesordev" {
     action {
       key = "topic"
       value = "events"
       action = "insert"
     }
     output {
-      logs    = [otelcol.processor.k8sattributes.bancogalacia.input]
+      logs    = [otelcol.processor.k8sattributes.valesordev.input]
     }
   }
-  otelcol.processor.k8sattributes "bancogalacia" {
+  otelcol.processor.k8sattributes "valesordev" {
     output {
       logs    = [otelcol.exporter.loki.kafka_logs.input]
     }
