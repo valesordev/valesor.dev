@@ -2,6 +2,10 @@
 setup-k8s:
 	cd k8s && make setup
 
+.PHONY: setup-object
+setup-object:
+	cd object && make setup
+
 .PHONY: setup-metrics
 setup-metrics:
 	cd metrics && make setup
@@ -35,4 +39,4 @@ setup-columnar:
 	cd columnar && make setup
 
 .PHONY: setup
-setup: setup-k8s setup-tabular setup-identity setup-eventstore setup-metrics setup-search setup-columnar setup-cache setup-alloy 
+setup: setup-k8s setup-tabular setup-identity setup-object setup-eventstore setup-metrics setup-search setup-columnar setup-cache setup-alloy 
