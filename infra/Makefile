@@ -1,42 +1,18 @@
-.PHONY: setup-k8s
-setup-k8s:
-	cd k8s && make setup
+# List all components here
+COMPONENTS := k8s object metrics search tabular eventstore columnar cache alloy identity 
 
-.PHONY: setup-object
-setup-object:
-	cd object && make setup
+# General setup target
+setup: $(addprefix setup-, $(COMPONENTS))
 
-.PHONY: setup-metrics
-setup-metrics:
-	cd metrics && make setup
+dev: $(addprefix dev-, $(COMPONENTS))
 
-.PHONY: setup-identity
-setup-identity:
-	cd identity && make setup
+clean: $(addprefix clean-, $(COMPONENTS))
 
-.PHONY: setup-eventstore
-setup-eventstore:
-	cd eventstore && make setup
+# Pattern rule for setup
+setup-%:
+	cd $* && make setup
 
-.PHONY: setup-search
-setup-search:
-	cd search && make setup
+clean-%:
+	cd $* && make clean
 
-.PHONY: setup-alloy
-setup-alloy:
-	cd alloy && make setup
-
-.PHONY: setup-cache
-setup-cache:
-	cd cache && make setup
-
-.PHONY: setup-tabular
-setup-tabular:
-	cd tabular && make setup
-
-.PHONY: setup-columnar
-setup-columnar:
-	cd columnar && make setup
-
-.PHONY: setup
-setup: setup-k8s setup-tabular setup-identity setup-object setup-eventstore setup-metrics setup-search setup-columnar setup-cache setup-alloy 
+.PHONY: all clean setup-infra setup-app dev-infra dev-app

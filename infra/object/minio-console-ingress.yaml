@@ -7,14 +7,14 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: minio-console.dsdemo.valesordev.com
+    - host: minio-console.local.valesor.dev
       http:
         paths:
           - pathType: Prefix
             path: /
             backend:
               service:
-                name: myminio-console
+                name: s3-infra-console
                 port:
                   number: 9443
 
