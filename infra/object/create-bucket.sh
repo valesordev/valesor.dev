@@ -17,8 +17,8 @@ fi
 
 # Retrieve Access Key and Secret Key from Kubernetes Secret
 echo "Retrieving credentials from Kubernetes secret..."
-ACCESS_KEY=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.accesskey}' | base64 --decode)
-SECRET_KEY=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.secretkey}' | base64 --decode)
+ACCESS_KEY=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.CONSOLE_ACCESS_KEY}' | base64 --decode)
+SECRET_KEY=$(kubectl get secret $SECRET_NAME -n $NAMESPACE -o jsonpath='{.data.CONSOLE_SECRET_KEY}' | base64 --decode)
 
 if [[ -z "$ACCESS_KEY" || -z "$SECRET_KEY" ]]; then
     echo "Failed to retrieve credentials. Exiting."
