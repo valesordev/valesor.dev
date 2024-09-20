@@ -176,30 +176,30 @@ querier:
   resources:
     limits:
       cpu: 2.8
-      memory: 5.6Gi
+      memory: 5600Mi
     requests:
       cpu: 2.8
-      memory: 5.6Gi
+      memory: 5600Mi
 
 query_frontend:
   replicas: 1
   resources:
     limits:
       cpu: 2.8
-      memory: 2.8Gi
+      memory: 2800Mi
     requests:
       cpu: 2.8
-      memory: 2.8Gi
+      memory: 2800Mi
 
 ruler:
   replicas: 1
   resources:
     limits:
       cpu: 1.4
-      memory: 2.8Gi
+      memory: 2800Mi
     requests:
       cpu: 1.4
-      memory: 2.8Gi
+      memory: 2800Mi
 
 store_gateway:
   persistentVolume:
@@ -208,10 +208,10 @@ store_gateway:
   resources:
     limits:
       cpu: 1.4
-      memory: 2.1Gi
+      memory: 2100Mi
     requests:
       cpu: 1.4
-      memory: 2.1Gi
+      memory: 2100Mi
   topologySpreadConstraints: {}
   affinity:
     podAntiAffinity:

@@ -6,6 +6,9 @@ metadata:
   namespace: minio-tenant
 spec:
   template:
+    metadata:
+      labels:
+        valesor.dev/job_name: mimir-buckets
     spec:
       serviceAccountName: create-bucket-service-account
       containers:
@@ -39,6 +42,9 @@ metadata:
   namespace: minio-tenant
 spec:
   template:
+    metadata:
+      labels:
+        valesor.dev/job_name: mimir-buckets
     spec:
       serviceAccountName: create-bucket-service-account
       containers:
@@ -72,6 +78,9 @@ metadata:
   namespace: minio-tenant
 spec:
   template:
+    metadata:
+      labels:
+        valesor.dev/job_name: mimir-buckets
     spec:
       serviceAccountName: create-bucket-service-account
       containers:
@@ -105,6 +114,9 @@ metadata:
   namespace: minio-tenant
 spec:
   template:
+    metadata:
+      labels:
+        valesor.dev/job_name: mimir-buckets
     spec:
       serviceAccountName: create-bucket-service-account
       containers:

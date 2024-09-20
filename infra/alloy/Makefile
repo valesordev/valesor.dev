@@ -11,3 +11,4 @@ setup: create-namespace
 	helm upgrade --install grafana-k8s-monitoring grafana/k8s-monitoring --namespace "alloy" --values k8s-monitoring-values.yaml
 	kubectl wait --for=condition=Ready pods -l app.kubernetes.io/instance=grafana-k8s-monitoring -n alloy --timeout=120s
 	kubectl apply -k .
+	kubectl wait --for=condition=Ready pods -l name=grafana-pdc-agent -n alloy --timeout=120s

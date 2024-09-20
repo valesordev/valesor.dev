@@ -1,12 +1,12 @@
 # List all components here
-COMPONENTS := k8s object metrics search tabular eventstore columnar cache alloy identity 
+COMPONENTS := k8s object metrics search tabular eventstore columnar cache identity alloy
 
 # General setup target
 setup: $(addprefix setup-, $(COMPONENTS))
 
 dev: $(addprefix dev-, $(COMPONENTS))
 
-clean: $(addprefix clean-, $(COMPONENTS))
+clean: clean-k8s
 
 # Pattern rule for setup
 setup-%:
