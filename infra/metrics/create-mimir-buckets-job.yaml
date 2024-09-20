@@ -1,0 +1,132 @@
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mimir-admin-bucket-job
+  namespace: minio-tenant
+spec:
+  template:
+    spec:
+      serviceAccountName: create-bucket-service-account
+      containers:
+      - name: create-bucket
+        image: google/cloud-sdk:latest
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            # Download the script
+            curl -o /tmp/create-bucket.sh https://raw.githubusercontent.com/valesordev/valesor.dev/refs/heads/main/infra/object/create-bucket.sh
+            chmod +x /tmp/create-bucket.sh
+            
+            # Run the script
+            /tmp/create-bucket.sh
+        env:
+        - name: NAMESPACE
+          value: "minio-tenant"
+        - name: SECRET_NAME
+          value: "storage-user"
+        - name: TENANT_URL
+          value: "https://minio.minio-tenant.svc.cluster.local"
+        - name: BUCKET_NAME
+          value: "mimir-admin"
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mimir-alertmanager-bucket-job
+  namespace: minio-tenant
+spec:
+  template:
+    spec:
+      serviceAccountName: create-bucket-service-account
+      containers:
+      - name: create-bucket
+        image: google/cloud-sdk:latest
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            # Download the script
+            curl -o /tmp/create-bucket.sh https://raw.githubusercontent.com/valesordev/valesor.dev/refs/heads/main/infra/object/create-bucket.sh
+            chmod +x /tmp/create-bucket.sh
+            
+            # Run the script
+            /tmp/create-bucket.sh
+        env:
+        - name: NAMESPACE
+          value: "minio-tenant"
+        - name: SECRET_NAME
+          value: "storage-user"
+        - name: TENANT_URL
+          value: "https://minio.minio-tenant.svc.cluster.local"
+        - name: BUCKET_NAME
+          value: "mimir-alertmanager"
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mimir-blocks-bucket-job
+  namespace: minio-tenant
+spec:
+  template:
+    spec:
+      serviceAccountName: create-bucket-service-account
+      containers:
+      - name: create-bucket
+        image: google/cloud-sdk:latest
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            # Download the script
+            curl -o /tmp/create-bucket.sh https://raw.githubusercontent.com/valesordev/valesor.dev/refs/heads/main/infra/object/create-bucket.sh
+            chmod +x /tmp/create-bucket.sh
+            
+            # Run the script
+            /tmp/create-bucket.sh
+        env:
+        - name: NAMESPACE
+          value: "minio-tenant"
+        - name: SECRET_NAME
+          value: "storage-user"
+        - name: TENANT_URL
+          value: "https://minio.minio-tenant.svc.cluster.local"
+        - name: BUCKET_NAME
+          value: "mimir-blocks"
+      restartPolicy: Never
+  backoffLimit: 0
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mimir-ruler-bucket-job
+  namespace: minio-tenant
+spec:
+  template:
+    spec:
+      serviceAccountName: create-bucket-service-account
+      containers:
+      - name: create-bucket
+        image: google/cloud-sdk:latest
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            # Download the script
+            curl -o /tmp/create-bucket.sh https://raw.githubusercontent.com/valesordev/valesor.dev/refs/heads/main/infra/object/create-bucket.sh
+            chmod +x /tmp/create-bucket.sh
+            
+            # Run the script
+            /tmp/create-bucket.sh
+        env:
+        - name: NAMESPACE
+          value: "minio-tenant"
+        - name: SECRET_NAME
+          value: "storage-user"
+        - name: TENANT_URL
+          value: "https://minio.minio-tenant.svc.cluster.local"
+        - name: BUCKET_NAME
+          value: "mimir-ruler"
+      restartPolicy: Never
+  backoffLimit: 0
