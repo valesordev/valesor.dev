@@ -1,5 +1,5 @@
 cluster:
-  name: test-cluster
+  name: local.valesor.dev
 externalServices:
   prometheus:
     host: https://prometheus-us-central1.grafana.net
@@ -44,7 +44,7 @@ opencost:
   enabled: true
   opencost:
     exporter:
-      defaultClusterId: test-cluster
+      defaultClusterId: local.valesor.dev
     prometheus:
       existingSecretName: grafana-cloud-credentials-metrics
       external:
@@ -54,58 +54,7 @@ kube-state-metrics:
 prometheus-node-exporter:
   enabled: true
 prometheus-operator-crds:
-  enabled: true
+  enabled: false
 alloy: {}
 alloy-events: {}
 alloy-logs: {}
-extraConfig: |-
-  // loki.source.kafka "kafka_source" {
-  //   brokers = ["eventstore-kafka-bootstrap.eventstore:9092"]
-  //   topics = ["events"]
-  //   labels = {component = "loki.source.kafka"}
-  //   forward_to = [loki.write.logs_service.receiver]
-  //   use_incoming_timestamp = true
-  //   relabel_rules = loki.relabel.kafka.rules
-  // }
-  // loki.relabel "kafka" {
-  //   forward_to = [loki.write.logs_service.receiver]
-  //   rule {
-  //     source_labels = ["__meta_kafka_topic"]
-  //     target_label = "topic"
-  //   }
-  //   rule {
-  //     source_labels = ["__meta_kafka_message_key"]
-  //     target_label = "message_key"
-  //   }
-  // }
-  otelcol.receiver.kafka "default" {
-    brokers          = ["eventstore-kafka-bootstrap.eventstore:9092"]
-    protocol_version = "2.0.0"
-     
-    topic = "events"
-    group_id = "events-test-group"
-    client_id = "events-test-group"
-    encoding = "json"
-
-    output {
-      logs    = [otelcol.processor.attributes.valesordev.input]
-    }
-  }
-  otelcol.processor.attributes "valesordev" {
-    action {
-      key = "topic"
-      value = "events"
-      action = "insert"
-    }
-    output {
-      logs    = [otelcol.processor.k8sattributes.valesordev.input]
-    }
-  }
-  otelcol.processor.k8sattributes "valesordev" {
-    output {
-      logs    = [otelcol.exporter.loki.kafka_logs.input]
-    }
-  }
-  otelcol.exporter.loki "kafka_logs" {
-    forward_to = [loki.write.logs_service.receiver]
-  }

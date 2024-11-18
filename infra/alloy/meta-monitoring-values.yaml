@@ -1,0 +1,13 @@
+namespacesToMonitor:
+  - search
+clusterLabelValue: "local.valesor.dev"
+cloud:
+  logs:
+    enabled: true
+    secret: "grafana-cloud-credentials-logs"
+  metrics:
+    enabled: true
+    secret: "grafana-cloud-credentials-metrics"
+  traces:
+    enabled: true
+    secret: "grafana-cloud-credentials-traces"

@@ -30,6 +30,12 @@ global:
   podAnnotations:
     bucketSecretVersion: "0"
 
+metaMonitoring:
+  serviceMonitor:
+    enabled: true
+  grafanaAgent:
+    enabled: false
+
 # This turns of the built-in MinIO support
 minio:
   enabled: false

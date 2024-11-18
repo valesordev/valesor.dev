@@ -1,9 +1,0 @@
-kind: Kustomization
-apiVersion: kustomize.config.k8s.io/v1beta1
-namespace: prometheus
-resources:
-  - service-account.yaml
-  - cluster-role.yaml
-  - cluster-role-binding.yaml
-  - prometheus-ingress.yaml
-  - grafana-ingress.yaml
