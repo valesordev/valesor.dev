@@ -1,4 +1,6 @@
-setup: namespace create-bucket-role create-bucket
+setup: namespace create-bucket-role create-bucket install-mimir
+
+install-mimir:
 	- kubectl create secret generic mimir-bucket-secret --namespace metrics --from-literal=AWS_ACCESS_KEY_ID="console" --from-literal=AWS_SECRET_ACCESS_KEY="console123"
 	helm upgrade --install mimir grafana/mimir-distributed --namespace metrics --create-namespace --values mimir-capped-small.yaml
 	kubectl wait --for=condition=Ready pods -l app.kubernetes.io/instance=mimir -n metrics --timeout=1200s

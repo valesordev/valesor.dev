@@ -1,10 +1,11 @@
-helm: update cert-manager
+helm: update cert-manager prometheus-operator-crds
 
 update: kind helm-repos
 	helm repo update
 
 helm-repos:
 	helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 	helm repo add grafana https://grafana.github.io/helm-charts
 	helm repo add jetstack https://charts.jetstack.io
 	helm repo add pinot https://raw.githubusercontent.com/apache/pinot/master/helm
@@ -12,8 +13,12 @@ helm-repos:
 cert-manager: kind
 	helm upgrade --install --atomic --timeout 120s cert-manager jetstack/cert-manager --set crds.enabled=true
 
+prometheus-operator-crds: kind
+	helm upgrade --install prometheus-operator-crds prometheus-community/prometheus-operator-crds
+
 kind:
-	kind create cluster --config kind-cluster.yaml
+	@kubectl cluster-info >/dev/null 2>&1 || \
+		kind create cluster --config kind-cluster.yaml
 
 setup: helm
 	kubectl apply -k .
