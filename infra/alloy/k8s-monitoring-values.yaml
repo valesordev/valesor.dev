@@ -79,3 +79,30 @@ extraConfig: |-
       forward_to = [prometheus.remote_write.metrics_service.receiver]
       job_name   = "integrations/postgres_exporter"
   }
+  prometheus.exporter.mongodb "integrations_mongodb_exporter" {
+    mongodb_uri    = "mongodb://mongodb-service.document:27017"
+    direct_connect = true
+  }
+  discovery.relabel "integrations_mongodb_exporter" {
+      targets = prometheus.exporter.mongodb.integrations_mongodb_exporter.targets
+
+      rule {
+          target_label = "service_name"
+          replacement  = "mongodb"
+      }
+
+      rule {
+          target_label = "mongodb_cluster"
+          replacement  = "local.valesor.dev"
+      }
+
+      rule {
+          target_label = "instance"
+          replacement  = "mongodb-service"
+      }
+  }
+  prometheus.scrape "integrations_mongodb_exporter" {
+      targets    = discovery.relabel.integrations_mongodb_exporter.output
+      forward_to = [prometheus.remote_write.metrics_service.receiver]
+      job_name   = "integrations/mongodb_exporter"
+  }
