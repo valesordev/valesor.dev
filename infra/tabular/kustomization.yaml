@@ -15,5 +15,6 @@ secretGenerator:
 resources:
   - pv.yaml
   - pvc.yaml
+  - pg_hba_conf-configmap.yaml
   - deployment.yaml
   - service.yaml
