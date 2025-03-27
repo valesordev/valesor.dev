@@ -23,7 +23,8 @@ class APNewsScraper:
             # Add a random delay between 2-5 seconds before starting
             time.sleep(random.uniform(2, 5))
 
-            response = self.session.get(self.base_url, headers=self.headers, timeout=10)
+            response = self.session.get(
+                self.base_url, headers=self.headers, timeout=10)
             print(f"Response status code: {response.status_code}")
             response.raise_for_status()
 
@@ -68,7 +69,9 @@ class APNewsScraper:
 
             # Extract content
             content_div = soup.find("main", {"class": "Page-main"})
-            paragraphs = content_div.find_all("p") if content_div else []
+            if not content_div:
+                raise Exception("Malformed HTML: main content not found")
+            paragraphs = content_div.find_all("p")
             content = " ".join([p.text.strip() for p in paragraphs])
 
             return {
@@ -98,6 +101,7 @@ class APNewsScraper:
 # Usage example
 if __name__ == "__main__":
     scraper = APNewsScraper()
-    articles = scraper.get_articles(max_articles=5)  # Limit to 5 articles for testing
+    # Limit to 5 articles for testing
+    articles = scraper.get_articles(max_articles=5)
     filename = scraper.save_articles(articles)
     print(f"Saved {len(articles)} articles to {filename}")
