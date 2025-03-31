@@ -5,7 +5,7 @@ metadata:
   labels:
     app: eventstore-connect-cluster
 spec:
-  version: 3.7.0
+  version: 3.9.0
   replicas: 1
   bootstrapServers: eventstore-kafka-bootstrap:9092
   metricsConfig:
