@@ -22,13 +22,17 @@ class FileStorage(BaseStorage):
     """Storage implementation that saves articles to a JSON file."""
 
     @classmethod
-    def save_articles(cls, articles: List[Article], filename: Optional[str] = None, directory: str = "") -> str:
+    def save_articles(cls,
+                      articles: List[Article],
+                      filename: Optional[str] = None,
+                      directory: str = "") -> str:
         """
         Saves articles to a JSON file with timestamp.
 
         Args:
             articles: List of Article objects to save
-            filename: Optional filename, will generate one based on timestamp if not provided
+            filename: Optional filename, will generate one based on timestamp if not
+                                         provided
             directory: Optional directory to save the file in
 
         Returns:
@@ -56,7 +60,10 @@ class KafkaStorage(BaseStorage):
     """Storage implementation that saves articles to a Kafka topic."""
 
     @classmethod
-    def save_articles(cls, articles: List[Article], topic: str = "articles", servers: str = "localhost:9092"):
+    def save_articles(cls,
+                      articles: List[Article],
+                      topic: str = "articles",
+                      servers: str = "localhost:9092"):
         """
         Save articles to a Kafka topic as JSON messages.
 

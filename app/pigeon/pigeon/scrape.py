@@ -23,7 +23,8 @@ def scrape_ap_news(max_articles: int = 10) -> List[Article]:
     return scraper.get_articles(max_articles=max_articles)
 
 
-def save_articles(articles: List[Article], format: str = "file", **kwargs) -> Optional[str]:
+def save_articles(articles: List[Article],
+                  format: str = "file", **kwargs) -> Optional[str]:
     """
     Save articles to the specified storage.
 
