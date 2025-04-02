@@ -37,7 +37,7 @@ spec:
           resources:
             limits:
               cpu: "1"
-              memory: "2Gi" # Adjust based on your requirements
+              memory: "3Gi" # Adjust based on your requirements
             requests:
               cpu: "0.5"
               memory: "1Gi" # Adjust based on your requirements

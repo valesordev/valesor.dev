@@ -1,5 +1,5 @@
 # List all components here
-COMPONENTS := k8s object metrics search tabular document eventstore columnar cache identity alloy
+COMPONENTS := k8s object metrics search tabular eventstore cache alloy monitors
 
 # General setup target
 setup: $(addprefix setup-, $(COMPONENTS))

@@ -13,7 +13,7 @@ create-bucket-role:
 
 create-bucket:
 	kubectl apply -f create-mimir-buckets-job.yaml
-	kubectl wait --for=condition=complete job -l valesor.dev/job_name=mimir-buckets -n minio-tenant --timeout=60s
+	kubectl wait --for=condition=complete job -l valesor.dev/job_name=mimir-buckets -n minio-tenant --timeout=120s
 
 clean-bucket-jobs:
 	kubectl delete -f create-mimir-buckets-job.yaml

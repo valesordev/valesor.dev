@@ -1,108 +1,324 @@
 cluster:
   name: local.valesor.dev
-externalServices:
-  prometheus:
-    host: https://prometheus-us-central1.grafana.net
+destinations:
+  - name: grafana-cloud-metrics
+    type: prometheus
+    url: https://prometheus-us-central1.grafana.net/api/prom/push
+    auth:
+      type: basic
+      usernameKey: prometheus
+      passwordKey: cloudKey
     secret:
       create: false
-      name: grafana-cloud-credentials-metrics
+      name: grafana-cloud-credentials
       namespace: alloy
-  loki:
-    host: https://logs-prod-017.grafana.net
+  - name: grafana-cloud-logs
+    type: loki
+    url: https://logs-prod-017.grafana.net/loki/api/v1/push
+    auth:
+      type: basic
+      usernameKey: loki
+      passwordKey: cloudKey
     secret:
       create: false
-      name: grafana-cloud-credentials-logs
+      name: grafana-cloud-credentials
       namespace: alloy
-  tempo:
-    host: https://tempo-us-central1.grafana.net:443
+  - name: grafana-cloud-traces
+    type: otlp
+    url: https://tempo-us-central1.grafana.net:443
+    protocol: grpc
+    auth:
+      type: basic
+      usernameKey: tempo
+      passwordKey: cloudKey
     secret:
       create: false
-      name: grafana-cloud-credentials-traces
+      name: grafana-cloud-credentials
       namespace: alloy
-metrics:
+    metrics:
+      enabled: false
+    logs:
+      enabled: false
+    traces:
+      enabled: true
+  - name: grafana-cloud-profiles
+    type: pyroscope
+    url: https://profiles-prod-003.grafana.net:443
+    auth:
+      type: basic
+      usernameKey: pyroscope
+      passwordKey: cloudKey
+    secret:
+      create: false
+      name: grafana-cloud-credentials
+      namespace: alloy
+clusterMetrics:
   enabled: true
-  cost:
+  controlPlane:
     enabled: true
-  node-exporter:
-    enabled: true
-logs:
-  enabled: true
-  pod_logs:
-    enabled: true
-  cluster_events:
-    enabled: true
-traces:
-  enabled: true
-receivers:
-  grpc:
-    enabled: true
-  http:
-    enabled: true
-  zipkin:
-    enabled: true
-opencost:
-  enabled: true
   opencost:
-    exporter:
-      defaultClusterId: local.valesor.dev
-    prometheus:
-      existingSecretName: grafana-cloud-credentials-metrics
-      external:
-        url: https://prometheus-us-central1.grafana.net/api/prom
-kube-state-metrics:
+    enabled: false
+  kepler:
+    enabled: false
+prometheusOperatorObjects:
   enabled: true
-prometheus-node-exporter:
+clusterEvents:
   enabled: true
-prometheus-operator-crds:
-  enabled: false
-alloy: {}
-alloy-events: {}
-alloy-logs: {}
-extraConfig: |-
-  prometheus.exporter.postgres "integrations_postgres_exporter" {
-    data_source_names = ["postgresql://postgres:postgres@postgres.tabular:5432/postgres?sslmode=disable"]
-  }
-  discovery.relabel "integrations_postgres_exporter" {
-      targets = prometheus.exporter.postgres.integrations_postgres_exporter.targets
-
-      rule {
-          target_label = "instance"
-          replacement  = constants.hostname
-      }
-      rule {                
-          target_label = "job"
-          replacement  = "integrations/postgres_exporter"
-      }
-  }
-  prometheus.scrape "integrations_postgres_exporter" {
-      targets    = discovery.relabel.integrations_postgres_exporter.output
-      forward_to = [prometheus.remote_write.metrics_service.receiver]
-      job_name   = "integrations/postgres_exporter"
-  }
-  prometheus.exporter.mongodb "integrations_mongodb_exporter" {
-    mongodb_uri    = "mongodb://mongodb-service.document:27017"
-    direct_connect = true
-  }
-  discovery.relabel "integrations_mongodb_exporter" {
-      targets = prometheus.exporter.mongodb.integrations_mongodb_exporter.targets
-
-      rule {
-          target_label = "service_name"
-          replacement  = "mongodb"
-      }
-
-      rule {
-          target_label = "mongodb_cluster"
-          replacement  = "local.valesor.dev"
-      }
-
-      rule {
-          target_label = "instance"
-          replacement  = "mongodb-service"
-      }
-  }
-  prometheus.scrape "integrations_mongodb_exporter" {
-      targets    = discovery.relabel.integrations_mongodb_exporter.output
-      forward_to = [prometheus.remote_write.metrics_service.receiver]
-      job_name   = "integrations/mongodb_exporter"
-  }
+podLogs:
+  enabled: true
+applicationObservability:
+  enabled: true
+  receivers:
+    otlp:
+      grpc:
+        enabled: true
+        port: 4317
+      http:
+        enabled: true
+        port: 4318
+    zipkin:
+      enabled: false
+  connectors:
+    grafanaCloudMetrics:
+      enabled: true
+autoInstrumentation:
+  enabled: true
+profiling:
+  enabled: true
+alloy-metrics:
+  enabled: true
+  alloy:
+    stabilityLevel: public-preview
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: cloudKey
+      - name: GCLOUD_FM_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: fleetmanagement
+      - name: CLUSTER_NAME
+        value: local.valesor.dev
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: grafana-k8s-monitoring-$(CLUSTER_NAME)-$(NAMESPACE)-$(POD_NAME)
+  remoteConfig:
+    enabled: true
+    url: https://fleet-management-prod-001.grafana.net
+    auth:
+      type: basic
+      username: sys.env("GCLOUD_FM_USER")
+      passwordFrom: sys.env("GCLOUD_RW_API_KEY")
+alloy-singleton:
+  enabled: true
+  alloy:
+    stabilityLevel: public-preview
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: cloudKey
+      - name: GCLOUD_FM_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: fleetmanagement
+      - name: CLUSTER_NAME
+        value: local.valesor.dev
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: grafana-k8s-monitoring-$(CLUSTER_NAME)-$(NAMESPACE)-$(POD_NAME)
+  remoteConfig:
+    enabled: true
+    url: https://fleet-management-prod-001.grafana.net
+    auth:
+      type: basic
+      username: sys.env("GCLOUD_FM_USER")
+      passwordFrom: sys.env("GCLOUD_RW_API_KEY")
+alloy-logs:
+  enabled: true
+  alloy:
+    stabilityLevel: public-preview
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: cloudKey
+      - name: GCLOUD_FM_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: fleetmanagement
+      - name: CLUSTER_NAME
+        value: local.valesor.dev
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: grafana-k8s-monitoring-$(CLUSTER_NAME)-$(NAMESPACE)-alloy-logs-$(NODE_NAME)
+  remoteConfig:
+    enabled: true
+    url: https://fleet-management-prod-001.grafana.net
+    auth:
+      type: basic
+      username: sys.env("GCLOUD_FM_USER")
+      passwordFrom: sys.env("GCLOUD_RW_API_KEY")
+alloy-receiver:
+  enabled: true
+  alloy:
+    extraPorts:
+      - name: otlp-grpc
+        port: 4317
+        targetPort: 4317
+        protocol: TCP
+      - name: otlp-http
+        port: 4318
+        targetPort: 4318
+        protocol: TCP
+      - name: zipkin
+        port: 9411
+        targetPort: 9411
+        protocol: TCP
+    stabilityLevel: public-preview
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: cloudKey
+      - name: GCLOUD_FM_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: fleetmanagement
+      - name: CLUSTER_NAME
+        value: local.valesor.dev
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: grafana-k8s-monitoring-$(CLUSTER_NAME)-$(NAMESPACE)-alloy-receiver-$(NODE_NAME)
+  remoteConfig:
+    enabled: true
+    url: https://fleet-management-prod-001.grafana.net
+    auth:
+      type: basic
+      username: sys.env("GCLOUD_FM_USER")
+      passwordFrom: sys.env("GCLOUD_RW_API_KEY")
+alloy-profiles:
+  enabled: true
+  alloy:
+    stabilityLevel: public-preview
+    extraEnv:
+      - name: GCLOUD_RW_API_KEY
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: cloudKey
+      - name: GCLOUD_FM_USER
+        valueFrom:
+          secretKeyRef:
+            name: grafana-cloud-credentials
+            namespace: alloy
+            key: fleetmanagement
+      - name: CLUSTER_NAME
+        value: local.valesor.dev
+      - name: NAMESPACE
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.namespace
+      - name: POD_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: metadata.name
+      - name: NODE_NAME
+        valueFrom:
+          fieldRef:
+            fieldPath: spec.nodeName
+      - name: GCLOUD_FM_COLLECTOR_ID
+        value: grafana-k8s-monitoring-$(CLUSTER_NAME)-$(NAMESPACE)-alloy-profiles-$(NODE_NAME)
+  remoteConfig:
+    enabled: true
+    url: https://fleet-management-prod-001.grafana.net
+    auth:
+      type: basic
+      username: sys.env("GCLOUD_FM_USER")
+      passwordFrom: sys.env("GCLOUD_RW_API_KEY")
+integrations:
+  collector: alloy-singleton
+  loki:
+    instances:
+      - name: loki
+        namespaces:
+          - search
+        labelSelectors:
+          app.kubernetes.io/name: loki
+        logs:
+          tuning:
+            # extract logfmt fields and set them as structured metadata
+            structuredMetadata:
+              caller:
+              tenant:
+              org_id:
+              user:
+  mimir:
+    instances:
+      - name: mimir
+        namespaces:
+          - metrics
+        labelSelectors:
+          app.kubernetes.io/name: mimir
+        logs:
+          tuning:
+            # extract logfmt fields and set them as structured metadata
+            structuredMetadata:
+              caller:
+              tenant:
+              org_id:
+              user:
