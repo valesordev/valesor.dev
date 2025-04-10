@@ -1,0 +1,39 @@
+local.file_match "csv_file" {
+  path_targets = [{
+    __path__ = "/data/random_data.csv",
+    job      = "csv_file",
+  }]
+}
+
+loki.source.file "csv_file" {
+  targets    = local.file_match.csv_file.targets
+  forward_to = [loki.process.csv_processor.receiver]
+}
+
+loki.process "csv_processor" {
+  stage.regex {
+    expression = "^(?P<column1>[^,]+),(?P<column2>[^,]+),(?P<column3>[^,]+),(?P<column4>[^,]+),(?P<column5>[^,]+)$"
+  }
+  stage.labels {
+    values = {
+      column1 = "column1",
+      column2 = "column2",
+      column3 = "column3",
+      column4 = "column4",
+      column5 = "column5",
+    }
+  }
+
+  forward_to = [loki.write.grafana_cloud_loki.receiver]
+}
+
+loki.write "grafana_cloud_loki" {
+	endpoint {
+		url = "https://logs-prod-017.grafana.net/loki/api/v1/push"
+
+		basic_auth {
+			username = "399444"
+			password = sys.env("GCLOUD_RW_API_KEY")
+		}
+	}
+}
